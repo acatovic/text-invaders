@@ -13,9 +13,11 @@ Three invader types attack in waves:
 - **Blue hunters** aim their shots at your ship. Two hits, 200 points.
 - **Orange bombers** fire a three-shot spread. Three hits, 300 points.
 
-You have three hull points and a short shield after taking damage. Clear the enemies to start a tougher wave. After losing your ship, press **R**, **Enter**, or **Space**, or use **Retry**.
+You have three hull points and a short shield after taking damage. Clear the enemies to start a tougher wave. After losing your ship, click **OK** in the game-over dialog to restart.
 
 Destroyed ships burst into colored ASCII fragments, sparks, and an expanding punctuation ring. Their shockwaves, the ship, and bullets push the background letters into a swirling current. Some letters turn pink, then gradually return to their original position and color. Reduced motion settings soften the disturbance and explosions.
+
+The game world is capped at 1440 × 900 and scales proportionally to fill larger windows. The background text repeats continuously and rewraps to fit. Simulation size and canvas resolution stay bounded on large and high-density screens.
 
 ```sh
 npm install

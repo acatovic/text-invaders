@@ -11,7 +11,7 @@
   <body>
     <main>
       <h1 class="accessible-text">Text Invaders</h1>
-      <p class="accessible-text">Move with the arrow keys or A and D. Hold Space or the left mouse button to shoot. On a touch screen, hold and drag to move and fire. Red skimmers shoot downward, blue hunters aim at you, and orange bombers fire a spread. Your ship has three hull points. Destroy enemies to score points and advance to the next wave. Press R, Enter, or Space after game over to restart.</p>
+      <p class="accessible-text">Move with the arrow keys or A and D. Hold Space or the left mouse button to shoot. On a touch screen, hold and drag to move and fire. Red skimmers shoot downward, blue hunters aim at you, and orange bombers fire a spread. Your ship has three hull points. Destroy enemies to score points and advance to the next wave. After game over, use the OK button to restart.</p>
       <p class="accessible-text page-text"></p>
       <header class="hud" aria-label="Game status">
         <span><span class="control-label">SCORE</span> <strong data-score>00000</strong></span>
@@ -20,12 +20,12 @@
       </header>
       <canvas aria-hidden="true"></canvas>
       <p class="controls"><span>← → / A D <span class="control-label">move</span></span><span>SPACE / CLICK <span class="control-label">fire</span></span></p>
-      <section class="game-over" aria-labelledby="game-over-title" hidden>
+      <section class="game-over" role="dialog" aria-modal="true" aria-labelledby="game-over-title" tabindex="-1" hidden>
         <p class="game-over-art" aria-hidden="true">· + * + ·</p>
         <h2 id="game-over-title">SHIP LOST</h2>
         <p data-final-score></p>
-        <button class="restart" type="button">RETRY ↵</button>
-        <p class="control-label">R / ENTER / SPACE</p>
+        <button class="restart" type="button">OK</button>
+        <p class="control-label">Click OK to play again.</p>
       </section>
     </main>
     <script type="module" src="/main.js"></script>

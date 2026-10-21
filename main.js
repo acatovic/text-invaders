@@ -14,6 +14,8 @@ const context = canvas.getContext('2d', { alpha: false });
 document.querySelector('.page-text').textContent = paragraphs.join('\n\n');
 
 const BACKGROUND = '#f7f7f5';
+const MAX_GAME_WIDTH = 1440;
+const MAX_GAME_HEIGHT = 900;
 const CELL = 28;
 const STEP = 1 / 120;
 const PALETTE_SIZE = 16;
@@ -120,9 +122,12 @@ function layout() {
   frame = 0;
   previousTime = 0;
   accumulator = 0;
-  width = window.innerWidth;
-  height = window.innerHeight;
-  ratio = Math.min(window.devicePixelRatio || 1, 2);
+  // Scale a bounded game world to fill the screen, preserving its aspect ratio.
+  // Both simulation size and backing pixels stay capped on large/HiDPI displays.
+  const scale = Math.max(1, window.innerWidth / MAX_GAME_WIDTH, window.innerHeight / MAX_GAME_HEIGHT);
+  width = window.innerWidth / scale;
+  height = window.innerHeight / scale;
+  ratio = Math.min((window.devicePixelRatio || 1) * scale, 2);
   fontSize = width < 600 ? 11 : 12;
   lineHeight = width < 600 ? 16 : 18;
   canvas.width = Math.round(width * ratio);
@@ -158,7 +163,6 @@ function layout() {
   const margin = width < 600 ? 16 : 24;
   const charactersPerLine = Math.max(1, Math.floor((width - margin * 2) / advance));
   let y = margin + fontSize + 36;
-  let paragraphIndex = 0;
   let seed = 73;
 
   function addLine(text) {
@@ -179,26 +183,27 @@ function layout() {
     y += lineHeight;
   }
 
+  // Keep repeating the text across paragraph boundaries so even ultrawide
+  // screens get full rows, without stretching the glyphs or increasing gaps.
+  const words = paragraphs.join(' ').split(' ');
+  let wordIndex = 0;
+  let remainder = words[wordIndex];
+  let line = '';
   while (y <= height - margin) {
-    const words = paragraphs[paragraphIndex % paragraphs.length].split(' ');
-    let line = '';
-    for (const word of words) {
-      if (line.length + word.length + (line ? 1 : 0) > charactersPerLine) {
-        addLine(line);
-        line = '';
-        if (y > height - margin) break;
-      }
-      // Break long words only on unusually narrow viewports.
-      let remainder = word;
-      while (remainder.length > charactersPerLine && y <= height - margin) {
-        addLine(remainder.slice(0, charactersPerLine));
-        remainder = remainder.slice(charactersPerLine);
-      }
-      line += (line ? ' ' : '') + remainder;
+    if (line && line.length + 1 + remainder.length > charactersPerLine) {
+      addLine(line);
+      line = '';
+      continue;
     }
-    if (line && y <= height - margin) addLine(line);
-    y += lineHeight * 0.55;
-    paragraphIndex++;
+    // Break long words only on unusually narrow viewports.
+    if (remainder.length > charactersPerLine) {
+      addLine(remainder.slice(0, charactersPerLine));
+      remainder = remainder.slice(charactersPerLine);
+      continue;
+    }
+    line += (line ? ' ' : '') + remainder;
+    wordIndex = (wordIndex + 1) % words.length;
+    remainder = words[wordIndex];
   }
 
   if (!game.started) {
@@ -213,6 +218,11 @@ function layout() {
 function clampShipX(x) {
   const padding = Math.min(ship.halfWidth + 12, width / 2);
   return Math.max(padding, Math.min(width - padding, x));
+}
+
+function shipXFromPointer(event) {
+  const bounds = canvas.getBoundingClientRect();
+  return clampShipX((event.clientX - bounds.left) * width / bounds.width);
 }
 
 function movementDirection() {
@@ -357,7 +367,7 @@ function hitShip() {
     resetInput();
     finalScoreLabel.textContent = `${game.score.toLocaleString()} points · wave ${game.wave}`;
     gameOverPanel.hidden = false;
-    document.querySelector('.restart').focus({ preventScroll: true });
+    gameOverPanel.focus({ preventScroll: true });
   }
 }
 
@@ -746,24 +756,19 @@ function wake() {
   if (!frame) frame = requestAnimationFrame(tick);
 }
 
-const gameKeys = new Set(['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space', 'KeyR', 'Enter']);
+const gameKeys = new Set(['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space']);
 
 window.addEventListener('keydown', (event) => {
-  if (!gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
+  if (game.over || !gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
   event.preventDefault();
   if (document.hidden) return;
-  if (game.over && !event.repeat && ['KeyR', 'Enter', 'Space'].includes(event.code)) {
-    restartGame();
-    return;
-  }
-  if (event.code === 'KeyR' || event.code === 'Enter' || game.over) return;
   if (event.code === 'Space' && !keys.has('Space') && !isFiring()) fireShot();
   keys.add(event.code);
   wake();
 });
 
 window.addEventListener('keyup', (event) => {
-  if (!gameKeys.has(event.code)) return;
+  if (game.over || !gameKeys.has(event.code)) return;
   event.preventDefault();
   keys.delete(event.code);
 });
@@ -772,7 +777,7 @@ canvas.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || !event.isPrimary) return;
   event.preventDefault();
   if (game.over) return;
-  if (event.pointerType === 'touch') ship.x = clampShipX(event.clientX);
+  if (event.pointerType === 'touch') ship.x = shipXFromPointer(event);
   if (!isFiring()) fireShot();
   firingPointer = event.pointerId;
   canvas.setPointerCapture(event.pointerId);
@@ -781,7 +786,7 @@ canvas.addEventListener('pointerdown', (event) => {
 
 canvas.addEventListener('pointermove', (event) => {
   if (event.pointerType === 'touch' && event.pointerId === firingPointer && !game.over) {
-    ship.x = clampShipX(event.clientX);
+    ship.x = shipXFromPointer(event);
   }
 });
 
