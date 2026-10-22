@@ -13,6 +13,8 @@ An ASCII spaceship sits at the bottom of a page of text. Move with **← / →**
 
 On a touch screen, hold and drag to move and fire.
 
+Press **Esc** to pause or resume, or use **Resume** in the pause dialog. Pausing freezes combat, sound effects, and the countdown between waves. Release and press movement or fire controls again after resuming.
+
 Three invader types attack in waves:
 
 - **Red skimmers** move quickly and shoot downward. One hit, 100 points.
@@ -24,6 +26,8 @@ You have three hull points and a short shield after taking damage. Clear the ene
 Each new game chooses a different work from twelve locally stored literature and poetry samples sourced from Project Gutenberg. Its paragraphs become the fluid background, with a varied starting paragraph and no back-to-back repeat of a work. Wave quotes come directly from that same excerpt, avoid consecutive repeats, and link to the original ebook. The bottom of the playfield also credits the current reading. See [the sample catalog and source notes](literature/README.md).
 
 Destroyed ships burst into colored ASCII fragments, sparks, and an expanding punctuation ring. Their shockwaves, the ship, and bullets push the background letters into a swirling current. Some letters turn pink, then gradually return to their original position and color. Reduced motion settings soften the disturbance and explosions.
+
+Sound effects come from [Kenney’s Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), released under [CC0](https://creativecommons.org/publicdomain/zero/1.0/): `laserSmall_004.ogg` for player shots, `lowFrequency_explosion_000.ogg` for destroyed enemies, and `lowFrequency_explosion_001.ogg` for player death. Sounds load when you press Start and can overlap during combat. See [the sound credit](public/audio-license.txt).
 
 The game world is capped at 1440 × 900 and scales proportionally to fill larger windows. The background text repeats continuously and rewraps to fit. Simulation size and canvas resolution stay bounded on large and high-density screens.
 

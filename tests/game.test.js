@@ -19,7 +19,7 @@ before(async () => {
   ));
 });
 const gameCode = readFileSync(new URL('../main.js', import.meta.url), 'utf8')
-  .replace(/^import .* from '\.\/(literature|community)\.js';\n/gm, '');
+  .replace(/^import .* from '\.\/(literature|community|audio)\.js';\n/gm, '');
 
 function createGame(screenWidth, screenHeight, reducedMotion = false) {
   const windowEvents = new Map();
@@ -47,6 +47,8 @@ function createGame(screenWidth, screenHeight, reducedMotion = false) {
     setAttribute() {}
     focus() {}
     blur() {}
+    showModal() { this.open = true; }
+    close() { this.open = false; }
     getContext() { return context; }
     getBoundingClientRect() { return { left: 0, width: screenWidth }; }
     setPointerCapture() {}
@@ -72,6 +74,7 @@ function createGame(screenWidth, screenHeight, reducedMotion = false) {
     chooseReading: () => readings[nextReading++ % readings.length],
     chooseQuote,
     setupCommunity: () => ({ startGame() {}, finishGame() {}, refresh() {} }),
+    setupAudio: () => ({ unlock() {}, pause() {}, play() {} }),
     window: {
       innerWidth: screenWidth, innerHeight: screenHeight, devicePixelRatio: 2,
       addEventListener: (name, handler) => windowEvents.set(name, handler),
@@ -111,6 +114,61 @@ test('new games and wave quotes avoid consecutive repeats', () => {
       }
     }
   }
+});
+
+test('Escape freezes gameplay and wave countdowns, clears input, and resumes without catching up', () => {
+  const run = createGame(1440, 900);
+  run(`
+    const escape = (repeat = false) => windowEvents.get('keydown')({ code: 'Escape', repeat, preventDefault() {} });
+    escape();
+    assert.equal(game.paused, false);
+    restartGame();
+    fireShot();
+    keys.add('Space'); keys.add('ArrowRight'); firingPointer = 1;
+    escape();
+    assert.equal(game.paused, true);
+    assert.equal(pauseMenu.open, true);
+    assert.equal(frame, 0);
+    assert.equal(keys.size, 0);
+    assert.equal(firingPointer, null);
+    const snapshot = () => JSON.stringify({ game, ship, bullets, enemies, enemyBullets, explosions, letters, flow: [...flowX] });
+    const frozen = snapshot();
+    updateGame(30); update(30); fireShot(); hitShip();
+    windowEvents.get('keydown')({ code: 'Space', preventDefault() {} });
+    canvas.listeners.get('pointerdown')({ button: 0, isPrimary: true, pointerType: 'touch', pointerId: 2, clientX: 0, preventDefault() {} });
+    documentEvents.get('visibilitychange')();
+    wake();
+    assert.equal(frame, 0);
+    assert.equal(snapshot(), frozen);
+    escape(true);
+    assert.equal(game.paused, true);
+    escape();
+    assert.equal(game.paused, false);
+    assert.equal(pauseMenu.open, false);
+    assert.equal(previousTime, 0);
+    assert.equal(accumulator, 0);
+    assert.ok(frame > 0);
+    const timeBefore = game.time;
+    update(STEP);
+    assert.equal(game.time, timeBefore + STEP);
+    assert.equal(bullets.length, 1);
+
+    enemies.length = 0; updateGame(STEP); updateGame(2);
+    assert.equal(game.intermission, true);
+    const countdownBefore = game.waveDelay;
+    escape(); updateGame(30);
+    assert.equal(game.waveDelay, countdownBefore);
+    document.querySelector('.resume').listeners.get('click')();
+    updateGame(STEP);
+    assert.equal(game.waveDelay, countdownBefore + STEP);
+
+    escape(); restartGame();
+    assert.equal(game.paused, false);
+    assert.equal(pauseMenu.open, false);
+    for (let i = 0; i < 3; i++) { ship.invulnerable = 0; hitShip(); }
+    escape();
+    assert.equal(game.paused, false);
+  `);
 });
 
 for (const [width, height, reducedMotion] of [[1440, 900, false], [390, 844, false], [640, 360, true]]) {

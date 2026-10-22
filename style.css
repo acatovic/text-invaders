@@ -67,7 +67,8 @@ canvas {
   height: auto;
 }
 
-.start {
+.start,
+.resume {
   min-width: 180px;
   padding: 14px 28px;
   border: 2px solid #252525;
@@ -78,16 +79,19 @@ canvas {
   cursor: pointer;
 }
 
-.start:hover {
+.start:hover,
+.resume:hover {
   background: #d51b77;
 }
 
-.start:active {
+.start:active,
+.resume:active {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 #252525;
 }
 
-.start:focus-visible {
+.start:focus-visible,
+.resume:focus-visible {
   outline: 2px solid #252525;
   outline-offset: 8px;
 }
@@ -284,6 +288,35 @@ canvas {
 
 .wave-clear[hidden] {
   display: none;
+}
+
+.pause-menu {
+  width: min(380px, calc(100% - 32px));
+  padding: 28px;
+  border: 2px solid #252525;
+  background: #f7f7f5;
+  color: #252525;
+  text-align: center;
+  box-shadow: 6px 6px 0 #ed2388;
+}
+
+.pause-menu::backdrop {
+  background: #f7f7f5bb;
+}
+
+.pause-menu h2 {
+  margin: 0 0 16px;
+  font: 700 32px / 1.25 var(--arcade-font);
+}
+
+.pause-menu p {
+  margin: 0 0 24px;
+  font-size: 13px;
+}
+
+.is-paused .wave-clear-content,
+.is-paused .wave-clear blockquote {
+  animation-play-state: paused;
 }
 
 .wave-clear-content {

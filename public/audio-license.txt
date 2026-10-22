@@ -1,0 +1,12 @@
+Sci-fi Sounds by Kenney
+Source: https://kenney.nl/assets/sci-fi-sounds
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Files used:
+laserSmall_004.ogg
+lowFrequency_explosion_000.ogg
+lowFrequency_explosion_001.ogg
+
+These sound effects may be copied, modified, and distributed, including for
+commercial purposes. Attribution is not required.

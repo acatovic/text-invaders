@@ -1,7 +1,9 @@
 import { chooseReading, chooseQuote } from './literature.js';
 import { setupCommunity } from './community.js';
+import { setupAudio } from './audio.js';
 
 const community = setupCommunity();
+const audio = setupAudio();
 
 let reading = chooseReading();
 let paragraphs = reading.paragraphs;
@@ -55,12 +57,14 @@ const bullets = [];
 const enemies = [];
 const enemyBullets = [];
 const explosions = [];
-const game = { score: 0, wave: 0, waveDelay: 0, intermission: false, over: false, time: 0, started: false };
+const game = { score: 0, wave: 0, waveDelay: 0, intermission: false, over: false, time: 0, started: false, paused: false };
 const scoreLabel = document.querySelector('[data-score]');
 const waveLabel = document.querySelector('[data-wave]');
 const hullLabel = document.querySelector('[data-hull]');
 const gameOverPanel = document.querySelector('.game-over');
 const startScreen = document.querySelector('.start-screen');
+const pauseMenu = document.querySelector('.pause-menu');
+const resumeButton = document.querySelector('.resume');
 const main = document.querySelector('main');
 const readingCredit = document.querySelector('.reading-credit');
 const waveClearPanel = document.querySelector('.wave-clear');
@@ -243,7 +247,7 @@ function movementDirection() {
 }
 
 function isFiring() {
-  return game.started && !game.over && !game.intermission && (keys.has('Space') || firingPointer !== null);
+  return game.started && !game.over && !game.intermission && !game.paused && (keys.has('Space') || firingPointer !== null);
 }
 
 function hasGameActivity() {
@@ -251,9 +255,10 @@ function hasGameActivity() {
 }
 
 function fireShot() {
-  if (!game.started || game.over || game.intermission) return;
+  if (!game.started || game.over || game.intermission || game.paused) return;
   bullets.push({ x: ship.x, y: ship.y - 8 });
   ship.cooldown = FIRE_INTERVAL;
+  audio.play('playerShot');
 }
 
 function updateHud() {
@@ -287,6 +292,10 @@ function spawnWave() {
 }
 
 function restartGame() {
+  audio.unlock();
+  game.paused = false;
+  pauseMenu.close();
+  main.classList.remove('is-paused');
   resetInput();
   reading = chooseReading(reading.id);
   previousQuote = undefined;
@@ -309,6 +318,27 @@ function restartGame() {
   spawnWave();
   wake();
   community.startGame();
+}
+
+function togglePause() {
+  if (!game.started || game.over) return;
+  game.paused = !game.paused;
+  resetInput();
+  previousTime = 0;
+  accumulator = 0;
+  if (game.paused) {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    audio.pause();
+    main.classList.add('is-paused');
+    pauseMenu.showModal();
+  } else {
+    pauseMenu.close();
+    resumeButton.blur();
+    main.classList.remove('is-paused');
+    audio.unlock();
+    wake();
+  }
 }
 
 function beginWaveIntermission() {
@@ -401,13 +431,14 @@ function explode(x, y, color, art, glyphAdvance, lineSpacing, scale = 1) {
 }
 
 function hitShip() {
-  if (ship.invulnerable > 0 || game.over || game.intermission) return;
+  if (ship.invulnerable > 0 || game.over || game.intermission || game.paused) return;
   ship.health--;
   ship.invulnerable = 2;
   explode(ship.x, ship.y + SHIP_LINE_HEIGHT * 2, PLAYER_COLOR,
     ship.health ? null : SHIP_ART, shipAdvance, SHIP_LINE_HEIGHT, ship.health ? 0.6 : 1.3);
   updateHud();
   if (!ship.health) {
+    audio.play('playerDeath');
     game.over = true;
     resetInput();
     finalScoreLabel.textContent = `${game.score.toLocaleString()} points · wave ${game.wave}`;
@@ -418,7 +449,7 @@ function hitShip() {
 }
 
 function updateGame(dt) {
-  if (!game.started) return;
+  if (!game.started || game.paused) return;
   game.time += dt;
   if (game.intermission) {
     game.waveDelay += dt;
@@ -483,6 +514,7 @@ function updateGame(dt) {
       target.health--;
       target.flash = 0.12;
       if (target.health <= 0) {
+        audio.play('enemyDestroyed');
         explode(target.x, target.y + target.height / 2, target.type.color,
           target.type.art, enemyAdvance, ENEMY_LINE_HEIGHT);
         enemies.splice(enemies.indexOf(target), 1);
@@ -620,6 +652,7 @@ function updateFlow(dt) {
 }
 
 function update(dt) {
+  if (game.paused) return 0;
   updateGame(dt);
   let energy = updateFlow(dt);
   const spring = motionPreference.matches ? 28 : 12;
@@ -779,6 +812,10 @@ function drawAscii(art, x, y, glyphAdvance, rowHeight, edgeColor) {
 }
 
 function tick(time) {
+  if (game.paused) {
+    frame = 0;
+    return;
+  }
   const elapsed = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : STEP;
   previousTime = time;
   accumulator += elapsed;
@@ -808,15 +845,21 @@ function tick(time) {
 }
 
 function wake() {
-  if (!frame) frame = requestAnimationFrame(tick);
+  if (!frame && !game.paused && !document.hidden) frame = requestAnimationFrame(tick);
 }
 
 const gameKeys = new Set(['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space']);
 
 window.addEventListener('keydown', (event) => {
+  if (event.code === 'Escape' && game.started && !game.over) {
+    event.preventDefault();
+    if (!event.repeat) togglePause();
+    return;
+  }
   if (!game.started || game.over || !gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
   event.preventDefault();
-  if (document.hidden || game.intermission) return;
+  if (document.hidden || game.intermission || game.paused) return;
+  audio.unlock();
   if (event.code === 'Space' && !keys.has('Space') && !isFiring()) fireShot();
   keys.add(event.code);
   wake();
@@ -831,7 +874,8 @@ window.addEventListener('keyup', (event) => {
 canvas.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || !event.isPrimary) return;
   event.preventDefault();
-  if (!game.started || game.over || game.intermission) return;
+  if (!game.started || game.over || game.intermission || game.paused) return;
+  audio.unlock();
   if (event.pointerType === 'touch') ship.x = shipXFromPointer(event);
   if (!isFiring()) fireShot();
   firingPointer = event.pointerId;
@@ -840,13 +884,18 @@ canvas.addEventListener('pointerdown', (event) => {
 });
 
 canvas.addEventListener('pointermove', (event) => {
-  if (event.pointerType === 'touch' && event.pointerId === firingPointer && !game.over && !game.intermission) {
+  if (event.pointerType === 'touch' && event.pointerId === firingPointer && !game.over && !game.intermission && !game.paused) {
     ship.x = shipXFromPointer(event);
   }
 });
 
 document.querySelector('.restart').addEventListener('click', restartGame);
 document.querySelector('.start').addEventListener('click', restartGame);
+resumeButton.addEventListener('click', togglePause);
+pauseMenu.addEventListener('cancel', (event) => {
+  event.preventDefault();
+  if (game.paused) togglePause();
+});
 document.querySelector('[data-show-leaderboard]').addEventListener('click', () => {
   resetInput();
   game.started = false;
