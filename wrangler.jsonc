@@ -1,8 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "txt-invaders",
+  "account_id": "9137679816f098fde321fdf7914bdf1b",
   "main": "worker.js",
   "compatibility_date": "2026-10-22",
+  "routes": [
+    { "pattern": "txtinvaders.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -12,8 +16,7 @@
     {
       "binding": "DB",
       "database_name": "txt-invaders",
-      // Replace after creating the production database; local development works now.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "08f9b078-aa2f-40c1-98bb-5300aea6f627",
       "migrations_dir": "migrations"
     }
   ],

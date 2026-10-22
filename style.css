@@ -235,6 +235,48 @@ canvas {
   color: #b51965;
 }
 
+.creator-credit {
+  margin: 20px auto 0;
+  color: #555;
+  font: 700 12px / 1.6 var(--arcade-font);
+}
+
+.creator-credit p {
+  margin: 0;
+}
+
+.creator-credit strong {
+  color: #252525;
+}
+
+.creator-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 4px;
+}
+
+.creator-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 8px;
+  color: #b51965;
+  text-decoration: none;
+}
+
+.creator-links a:hover {
+  color: #ed2388;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.creator-links a:focus-visible {
+  outline: 2px solid #252525;
+  outline-offset: 2px;
+}
+
 .touch-instructions,
 .is-starting .hud,
 .is-starting .controls,
