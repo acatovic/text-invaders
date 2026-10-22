@@ -3,6 +3,8 @@ Space Invaders but with text and ascii
 
 ## ASCII arcade
 
+The game opens on a pixel-letter **Txt Invaders** title screen. Click or tap **Start** (or focus it and press Enter or Space) to begin the first wave. A short control hint adapts to keyboard or touch screens.
+
 An ASCII spaceship sits at the bottom of a page of text. Move with **← / →** or **A / D**, and hold **Space** or the **left mouse button** to fire ASCII shots upward. The ship stays within the screen and only moves horizontally.
 
 On a touch screen, hold and drag to move and fire.

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 8" shape-rendering="crispEdges">
+  <defs>
+    <path id="T" d="M0 0h5v1h-5zM2 1h1v1h-1zM2 2h1v1h-1zM2 3h1v1h-1zM2 4h1v1h-1zM2 5h1v1h-1zM2 6h1v1h-1z" />
+    <path id="x" d="M0 2h1v1h-1zM4 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM2 4h1v1h-1zM1 5h1v1h-1zM3 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1z" />
+    <path id="t" d="M2 0h1v1h-1zM2 1h1v1h-1zM0 2h5v1h-5zM2 3h1v1h-1zM2 4h1v1h-1zM2 5h1v1h-1zM4 5h1v1h-1zM3 6h1v1h-1z" />
+    <path id="I" d="M0 0h5v1h-5zM2 1h1v1h-1zM2 2h1v1h-1zM2 3h1v1h-1zM2 4h1v1h-1zM2 5h1v1h-1zM0 6h5v1h-5z" />
+    <path id="n" d="M0 2h4v1h-4zM0 3h1v1h-1zM4 3h1v1h-1zM0 4h1v1h-1zM4 4h1v1h-1zM0 5h1v1h-1zM4 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1z" />
+    <path id="v" d="M0 2h1v1h-1zM4 2h1v1h-1zM0 3h1v1h-1zM4 3h1v1h-1zM0 4h1v1h-1zM4 4h1v1h-1zM1 5h1v1h-1zM3 5h1v1h-1zM2 6h1v1h-1z" />
+    <path id="a" d="M1 2h3v1h-3zM4 3h1v1h-1zM1 4h4v1h-4zM0 5h1v1h-1zM4 5h1v1h-1zM1 6h4v1h-4z" />
+    <path id="d" d="M4 0h1v1h-1zM4 1h1v1h-1zM1 2h4v1h-4zM0 3h1v1h-1zM4 3h1v1h-1zM0 4h1v1h-1zM4 4h1v1h-1zM0 5h1v1h-1zM4 5h1v1h-1zM1 6h4v1h-4z" />
+    <path id="e" d="M1 2h3v1h-3zM0 3h1v1h-1zM4 3h1v1h-1zM0 4h5v1h-5zM0 5h1v1h-1zM1 6h3v1h-3z" />
+    <path id="r" d="M0 2h1v1h-1zM2 2h2v1h-2zM0 3h2v1h-2zM4 3h1v1h-1zM0 4h1v1h-1zM0 5h1v1h-1zM0 6h1v1h-1z" />
+    <path id="s" d="M1 2h4v1h-4zM0 3h1v1h-1zM1 4h3v1h-3zM4 5h1v1h-1zM0 6h4v1h-4z" />
+    <g id="title">
+      <use href="#T" x="0" />
+      <use href="#x" x="6" />
+      <use href="#t" x="12" />
+      <use href="#I" x="22" />
+      <use href="#n" x="28" />
+      <use href="#v" x="34" />
+      <use href="#a" x="40" />
+      <use href="#d" x="46" />
+      <use href="#e" x="52" />
+      <use href="#r" x="58" />
+      <use href="#s" x="64" />
+    </g>
+  </defs>
+  <use href="#title" x="1" y="1" fill="#ed2388" />
+  <use href="#title" fill="#252525" />
+</svg>

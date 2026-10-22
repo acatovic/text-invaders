@@ -62,6 +62,7 @@ const scoreLabel = document.querySelector('[data-score]');
 const waveLabel = document.querySelector('[data-wave]');
 const hullLabel = document.querySelector('[data-hull]');
 const gameOverPanel = document.querySelector('.game-over');
+const startScreen = document.querySelector('.start-screen');
 const finalScoreLabel = document.querySelector('[data-final-score]');
 let firingPointer = null;
 let shipAdvance = 0;
@@ -206,11 +207,6 @@ function layout() {
     remainder = words[wordIndex];
   }
 
-  if (!game.started) {
-    game.started = true;
-    spawnWave();
-    updateHud();
-  }
   draw();
   if (hasGameActivity()) wake();
 }
@@ -231,15 +227,15 @@ function movementDirection() {
 }
 
 function isFiring() {
-  return !game.over && (keys.has('Space') || firingPointer !== null);
+  return game.started && !game.over && (keys.has('Space') || firingPointer !== null);
 }
 
 function hasGameActivity() {
-  return !game.over || bullets.length > 0 || enemyBullets.length > 0 || explosions.length > 0;
+  return game.started && (!game.over || bullets.length > 0 || enemyBullets.length > 0 || explosions.length > 0);
 }
 
 function fireShot() {
-  if (game.over) return;
+  if (!game.started || game.over) return;
   bullets.push({ x: ship.x, y: ship.y - 8 });
   ship.cooldown = FIRE_INTERVAL;
 }
@@ -276,6 +272,10 @@ function spawnWave() {
 
 function restartGame() {
   resetInput();
+  game.started = true;
+  startScreen.hidden = true;
+  document.querySelector('main').classList.remove('is-starting');
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   bullets.length = enemyBullets.length = enemies.length = explosions.length = 0;
   game.score = game.wave = game.waveDelay = game.time = 0;
   game.over = false;
@@ -372,6 +372,7 @@ function hitShip() {
 }
 
 function updateGame(dt) {
+  if (!game.started) return;
   game.time += dt;
   ship.invulnerable = Math.max(0, ship.invulnerable - dt);
   const previousX = ship.x;
@@ -621,6 +622,7 @@ function draw() {
 }
 
 function drawGame() {
+  if (!game.started) return;
   context.save();
   context.font = SHIP_FONT;
   context.textBaseline = 'top';
@@ -759,7 +761,7 @@ function wake() {
 const gameKeys = new Set(['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space']);
 
 window.addEventListener('keydown', (event) => {
-  if (game.over || !gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
+  if (!game.started || game.over || !gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
   event.preventDefault();
   if (document.hidden) return;
   if (event.code === 'Space' && !keys.has('Space') && !isFiring()) fireShot();
@@ -768,7 +770,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('keyup', (event) => {
-  if (game.over || !gameKeys.has(event.code)) return;
+  if (!game.started || game.over || !gameKeys.has(event.code)) return;
   event.preventDefault();
   keys.delete(event.code);
 });
@@ -776,7 +778,7 @@ window.addEventListener('keyup', (event) => {
 canvas.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || !event.isPrimary) return;
   event.preventDefault();
-  if (game.over) return;
+  if (!game.started || game.over) return;
   if (event.pointerType === 'touch') ship.x = shipXFromPointer(event);
   if (!isFiring()) fireShot();
   firingPointer = event.pointerId;
@@ -791,6 +793,7 @@ canvas.addEventListener('pointermove', (event) => {
 });
 
 document.querySelector('.restart').addEventListener('click', restartGame);
+document.querySelector('.start').addEventListener('click', restartGame);
 
 function releaseFire(event) {
   if (event.pointerId === firingPointer) firingPointer = null;

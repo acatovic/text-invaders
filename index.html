@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f7f7f5" />
     <meta name="description" content="Battle colorful ASCII invaders on a living page of text. Dodge enemy fire and blast ships into rippling explosions of letters." />
-    <title>Text Invaders</title>
+    <title>Txt Invaders</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <main>
-      <h1 class="accessible-text">Text Invaders</h1>
+    <main class="is-starting">
+      <section class="start-screen" aria-labelledby="start-title">
+        <h1 id="start-title"><img class="title-art" src="/title.svg" alt="Txt Invaders" width="840" height="96" /></h1>
+        <button class="start" type="button" autofocus>Start</button>
+        <p class="start-instructions"><span class="keyboard-instructions"><span class="instruction-key">← →</span> / <span class="instruction-key">A D</span> to move · Hold <span class="instruction-key">SPACE</span> or click to fire.</span><span class="touch-instructions">Hold and drag to move and fire.</span></p>
+      </section>
       <p class="accessible-text">Move with the arrow keys or A and D. Hold Space or the left mouse button to shoot. On a touch screen, hold and drag to move and fire. Red skimmers shoot downward, blue hunters aim at you, and orange bombers fire a spread. Your ship has three hull points. Destroy enemies to score points and advance to the next wave. After game over, use the OK button to restart.</p>
       <p class="accessible-text page-text"></p>
       <header class="hud" aria-label="Game status">
