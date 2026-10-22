@@ -1,0 +1,157 @@
+[
+  {
+    "id": "alice-in-wonderland",
+    "title": "Alice’s Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "gutenbergId": 11,
+    "poetry": false,
+    "quotes": [
+      "Would the fall never come to an end?",
+      "I wonder if I shall fall right through the earth!",
+      "How brave they’ll all think me at home!",
+      "I must be getting somewhere near the centre of the earth."
+    ]
+  },
+  {
+    "id": "jabberwocky",
+    "title": "Jabberwocky (Through the Looking-Glass)",
+    "author": "Lewis Carroll",
+    "gutenbergId": 12,
+    "poetry": true,
+    "quotes": [
+      "Beware the Jabberwock, my son!",
+      "He took his vorpal sword in hand:",
+      "The vorpal blade went snicker-snack!",
+      "O frabjous day! Callooh! Callay!"
+    ]
+  },
+  {
+    "id": "moby-dick",
+    "title": "Moby-Dick",
+    "author": "Herman Melville",
+    "gutenbergId": 2701,
+    "poetry": false,
+    "quotes": [
+      "Call me Ishmael.",
+      "Yes, as every one knows, meditation and water are wedded for ever.",
+      "Surely all this is not without meaning.",
+      "It is the image of the ungraspable phantom of life; and this is the key to it all."
+    ]
+  },
+  {
+    "id": "frankenstein",
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "gutenbergId": 84,
+    "poetry": false,
+    "quotes": [
+      "What may not be expected in a country of eternal light?",
+      "Inspirited by this wind of promise, my daydreams become more fervent and vivid.",
+      "This expedition has been the favourite dream of my early years.",
+      "I can, even now, remember the hour from which I dedicated myself to this great enterprise."
+    ]
+  },
+  {
+    "id": "pride-and-prejudice",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "gutenbergId": 1342,
+    "poetry": false,
+    "quotes": [
+      "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.",
+      "I have a high respect for your nerves.",
+      "You take delight in vexing me.",
+      "I certainly have had my share of beauty, but I do not pretend to be anything extraordinary now."
+    ]
+  },
+  {
+    "id": "the-time-machine",
+    "title": "The Time Machine",
+    "author": "H. G. Wells",
+    "gutenbergId": 35,
+    "poetry": false,
+    "quotes": [
+      "There are really four dimensions, three which we call the three planes of Space, and a fourth, Time.",
+      "You must follow me carefully.",
+      "These things are mere abstractions.",
+      "It is only another way of looking at Time."
+    ]
+  },
+  {
+    "id": "the-war-of-the-worlds",
+    "title": "The War of the Worlds",
+    "author": "H. G. Wells",
+    "gutenbergId": 36,
+    "poetry": false,
+    "quotes": [
+      "And early in the twentieth century came the great disillusionment.",
+      "Are we such apostles of mercy as to complain if the Martians warred in the same spirit?",
+      "It is curious to recall some of the mental habits of those departed days."
+    ]
+  },
+  {
+    "id": "the-wizard-of-oz",
+    "title": "The Wonderful Wizard of Oz",
+    "author": "L. Frank Baum",
+    "gutenbergId": 55,
+    "poetry": false,
+    "quotes": [
+      "Then a strange thing happened.",
+      "The house whirled around two or three times and rose slowly through the air.",
+      "Dorothy felt as if she were going up in a balloon.",
+      "It was very dark, and the wind howled horribly around her, but Dorothy found she was riding quite easily."
+    ]
+  },
+  {
+    "id": "treasure-island",
+    "title": "Treasure Island",
+    "author": "Robert Louis Stevenson",
+    "gutenbergId": 120,
+    "poetry": false,
+    "quotes": [
+      "Fifteen men on the dead man’s chest-- Yo-ho-ho, and a bottle of rum!",
+      "You mought call me captain.",
+      "How that personage haunted my dreams, I need scarcely tell you.",
+      "To see him leap and run and pursue me over hedge and ditch was the worst of nightmares."
+    ]
+  },
+  {
+    "id": "walden",
+    "title": "Walden",
+    "author": "Henry David Thoreau",
+    "gutenbergId": 205,
+    "poetry": false,
+    "quotes": [
+      "Simplicity, simplicity, simplicity!",
+      "Our life is frittered away by detail.",
+      "We do not ride on the railroad; it rides upon us.",
+      "Why should we live with such hurry and waste of life?"
+    ]
+  },
+  {
+    "id": "songs-of-innocence-and-experience",
+    "title": "Songs of Innocence and of Experience",
+    "author": "William Blake",
+    "gutenbergId": 1934,
+    "poetry": true,
+    "quotes": [
+      "Tiger, tiger, burning bright In the forests of the night,",
+      "What immortal hand or eye Could frame thy fearful symmetry?",
+      "When the stars threw down their spears, And watered heaven with their tears,",
+      "And I made a rural pen, And I stained the water clear,"
+    ]
+  },
+  {
+    "id": "the-raven",
+    "title": "The Raven",
+    "author": "Edgar Allan Poe",
+    "gutenbergId": 1065,
+    "poetry": true,
+    "quotes": [
+      "Once upon a midnight dreary, while I pondered, weak and weary,",
+      "Deep into that darkness peering, long I stood there wondering, fearing,",
+      "Quoth the Raven, “Nevermore.”",
+      "Darkness there and nothing more."
+    ]
+  }
+]

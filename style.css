@@ -92,12 +92,161 @@ canvas {
 
 .touch-instructions,
 .is-starting .hud,
-.is-starting .controls {
+.is-starting .controls,
+.is-starting .reading-credit,
+.is-intermission .controls,
+.is-intermission .reading-credit {
   display: none;
 }
 
 .is-starting canvas {
   opacity: 0.1;
+}
+
+.is-intermission canvas {
+  opacity: 0.18;
+}
+
+.reading-credit {
+  position: fixed;
+  bottom: 44px;
+  left: 50%;
+  max-width: calc(100% - 32px);
+  padding: 3px 8px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  color: #777;
+  background: #f7f7f5ed;
+  font-size: 10px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.reading-credit:hover,
+.wave-clear a:hover {
+  color: #ed2388;
+  text-decoration: underline;
+}
+
+.wave-clear {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.wave-clear[hidden] {
+  display: none;
+}
+
+.wave-clear-content {
+  width: min(900px, 100%);
+  animation: quote-arrive 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.wave-clear-title,
+.wave-countdown {
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 3px;
+}
+
+.wave-clear-title {
+  margin: 0 0 28px;
+}
+
+.wave-clear blockquote {
+  margin: 0;
+  color: #ed2388;
+  font-size: clamp(22px, 4.5vw, 52px);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  animation: quote-flash 1.6s ease-in-out 3;
+}
+
+.wave-clear blockquote::before {
+  content: "“";
+}
+
+.wave-clear blockquote::after {
+  content: "”";
+}
+
+.wave-clear cite {
+  display: block;
+  margin-top: 24px;
+  font-size: clamp(11px, 1.5vw, 14px);
+  font-style: normal;
+  line-height: 1.8;
+}
+
+.wave-clear a {
+  color: #555;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.wave-countdown {
+  margin: 36px 0 0;
+  color: #777;
+}
+
+@keyframes quote-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes quote-flash {
+  0%, 100% {
+    text-shadow: 0 0 0 #ed238800;
+  }
+  50% {
+    color: #b51965;
+    text-shadow: 3px 3px 0 #ed238826, 0 0 24px #ed23884d;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-clear-content,
+  .wave-clear blockquote {
+    animation: none;
+  }
+}
+
+@media (max-height: 500px) {
+  .wave-clear {
+    padding: 40px 24px;
+  }
+
+  .wave-clear-title {
+    margin-bottom: 12px;
+  }
+
+  .wave-clear blockquote {
+    font-size: clamp(16px, 3vw, 24px);
+  }
+
+  .wave-clear cite {
+    margin-top: 12px;
+  }
+
+  .wave-countdown {
+    margin-top: 16px;
+  }
 }
 
 .controls {

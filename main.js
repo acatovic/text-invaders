@@ -1,17 +1,11 @@
-const paragraphs = [
-  'The page holds still until something passes through it. A small movement is enough: the letters loosen, the lines bend, and what looked like a solid thing remembers how to flow. For a moment there is only the current, carrying little pieces of meaning out of place. Then, slowly, each one finds its way home.',
-  'There is a kind of order in water. It takes the shape of whatever holds it, but never quite stops moving. Beneath a quiet surface, one small motion becomes another. The edge of a ripple reaches the next ripple. Nothing moves alone. Even here, between one word and the next, there is room for a current to pass.',
-  'Imagine a sentence laid gently on the surface of a river. At first you can read it. Then the water turns, and the spaces open, and the words drift apart without forgetting where they belong. Some catch the light for an instant. A little pink in all that black. A trace of where your hand has been.',
-  'We think of a page as something fixed. Ink dries, a line ends, a thought settles into its place. But reading is a movement too. Your eyes pull the words forward. A phrase stays with you while the rest slips past. The same sentence can return a hundred times and arrive a little differently each time.',
-  'Push gently and the movement stays close. Move quickly and a wider wake opens behind you. The letters follow one another around the bend, gather at the edges, and spill into the empty space. There is no hurry to put everything back. Let the disturbance travel. Let the last small motion finish on its own.',
-  'A current does not keep the shape of the thing that made it. It opens, folds, unwinds. For a little while it carries the memory of a direction. Then the memory becomes smaller than the water around it, and the surface is quiet again. Nothing has disappeared. Everything is simply finding its place.',
-  'Between the letters there is more space than you might expect. Enough for a turn, a pause, a passing wave. Enough for something familiar to become strange and then familiar again. Follow a single letter as it leaves its line. It drifts, it hesitates, it returns. The sentence has been waiting for it.',
-  'Leave the page alone and it becomes a page again. The bright marks fade. The scattered words draw close. Each line straightens until the whole surface is still, holding the possibility of another movement. A quiet field of little black letters. A little time. The smallest touch, and everything begins again.',
-];
+import { chooseReading, chooseQuote } from './literature.js';
+
+let reading = chooseReading();
+let paragraphs = reading.paragraphs;
+let previousQuote;
 
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d', { alpha: false });
-document.querySelector('.page-text').textContent = paragraphs.join('\n\n');
 
 const BACKGROUND = '#f7f7f5';
 const MAX_GAME_WIDTH = 1440;
@@ -28,6 +22,7 @@ const SHIP_LINE_HEIGHT = 17;
 const SHIP_SPEED = 420;
 const BULLET_SPEED = 640;
 const FIRE_INTERVAL = 0.16;
+const WAVE_INTERMISSION = 6;
 const ENEMY_FONT_SIZE = 16;
 const ENEMY_LINE_HEIGHT = 16;
 const SPRITE_FONT_FAMILY = '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace';
@@ -57,18 +52,36 @@ const bullets = [];
 const enemies = [];
 const enemyBullets = [];
 const explosions = [];
-const game = { score: 0, wave: 0, waveDelay: 0, over: false, time: 0, started: false };
+const game = { score: 0, wave: 0, waveDelay: 0, intermission: false, over: false, time: 0, started: false };
 const scoreLabel = document.querySelector('[data-score]');
 const waveLabel = document.querySelector('[data-wave]');
 const hullLabel = document.querySelector('[data-hull]');
 const gameOverPanel = document.querySelector('.game-over');
 const startScreen = document.querySelector('.start-screen');
+const main = document.querySelector('main');
+const readingCredit = document.querySelector('.reading-credit');
+const waveClearPanel = document.querySelector('.wave-clear');
+const waveClearTitle = document.querySelector('[data-wave-clear-title]');
+const waveQuote = document.querySelector('[data-wave-quote]');
+const waveSource = document.querySelector('[data-wave-source]');
+const waveCountdown = document.querySelector('[data-wave-countdown]');
 const finalScoreLabel = document.querySelector('[data-final-score]');
 let firingPointer = null;
 let shipAdvance = 0;
 let enemyAdvance = 0;
-const glyphs = [...new Set(paragraphs.join(''))].filter((glyph) => glyph !== ' ');
-const glyphIndex = new Map(glyphs.map((glyph, index) => [glyph, index]));
+let glyphs;
+let glyphIndex;
+
+function prepareReading() {
+  paragraphs = reading.paragraphs;
+  glyphs = [...new Set(paragraphs.join(''))].filter((glyph) => !/\s/.test(glyph));
+  glyphIndex = new Map(glyphs.map((glyph, index) => [glyph, index]));
+  document.querySelector('.page-text').textContent = paragraphs.join('\n\n');
+  readingCredit.textContent = `${reading.title} · ${reading.author}`;
+  readingCredit.href = reading.url;
+}
+
+prepareReading();
 
 let width;
 let height;
@@ -186,7 +199,7 @@ function layout() {
 
   // Keep repeating the text across paragraph boundaries so even ultrawide
   // screens get full rows, without stretching the glyphs or increasing gaps.
-  const words = paragraphs.join(' ').split(' ');
+  const words = paragraphs.join(' ').trim().split(/\s+/);
   let wordIndex = 0;
   let remainder = words[wordIndex];
   let line = '';
@@ -227,7 +240,7 @@ function movementDirection() {
 }
 
 function isFiring() {
-  return game.started && !game.over && (keys.has('Space') || firingPointer !== null);
+  return game.started && !game.over && !game.intermission && (keys.has('Space') || firingPointer !== null);
 }
 
 function hasGameActivity() {
@@ -235,7 +248,7 @@ function hasGameActivity() {
 }
 
 function fireShot() {
-  if (!game.started || game.over) return;
+  if (!game.started || game.over || game.intermission) return;
   bullets.push({ x: ship.x, y: ship.y - 8 });
   ship.cooldown = FIRE_INTERVAL;
 }
@@ -272,9 +285,14 @@ function spawnWave() {
 
 function restartGame() {
   resetInput();
+  reading = chooseReading(reading.id);
+  previousQuote = undefined;
+  prepareReading();
   game.started = true;
   startScreen.hidden = true;
-  document.querySelector('main').classList.remove('is-starting');
+  main.classList.remove('is-starting', 'is-intermission');
+  waveClearPanel.hidden = true;
+  game.intermission = false;
   if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   bullets.length = enemyBullets.length = enemies.length = explosions.length = 0;
   game.score = game.wave = game.waveDelay = game.time = 0;
@@ -284,8 +302,31 @@ function restartGame() {
   ship.invulnerable = 2;
   ship.x = width / 2;
   gameOverPanel.hidden = true;
+  layout();
   spawnWave();
   wake();
+}
+
+function beginWaveIntermission() {
+  game.intermission = true;
+  game.waveDelay = 0;
+  resetInput();
+  bullets.length = enemyBullets.length = 0;
+  previousQuote = chooseQuote(reading, previousQuote);
+  waveClearTitle.textContent = `WAVE ${String(game.wave).padStart(2, '0')} CLEARED`;
+  waveQuote.textContent = previousQuote;
+  waveSource.textContent = `${reading.author} · ${reading.title}`;
+  waveSource.href = reading.url;
+  updateWaveCountdown();
+  main.classList.add('is-intermission');
+  waveClearPanel.hidden = false;
+  shockwave(width / 2, height / 2, Math.max(width, height) * 0.7, 500);
+}
+
+function updateWaveCountdown() {
+  const remaining = Math.max(0, Math.ceil(WAVE_INTERMISSION - game.waveDelay));
+  const label = `WAVE ${String(game.wave + 1).padStart(2, '0')} IN ${remaining}`;
+  if (waveCountdown.textContent !== label) waveCountdown.textContent = label;
 }
 
 function fireEnemyShot(enemy) {
@@ -356,7 +397,7 @@ function explode(x, y, color, art, glyphAdvance, lineSpacing, scale = 1) {
 }
 
 function hitShip() {
-  if (ship.invulnerable > 0 || game.over) return;
+  if (ship.invulnerable > 0 || game.over || game.intermission) return;
   ship.health--;
   ship.invulnerable = 2;
   explode(ship.x, ship.y + SHIP_LINE_HEIGHT * 2, PLAYER_COLOR,
@@ -374,9 +415,20 @@ function hitShip() {
 function updateGame(dt) {
   if (!game.started) return;
   game.time += dt;
+  if (game.intermission) {
+    game.waveDelay += dt;
+    updateWaveCountdown();
+    if (game.waveDelay + 1e-9 >= WAVE_INTERMISSION) {
+      game.intermission = false;
+      game.waveDelay = 0;
+      waveClearPanel.hidden = true;
+      main.classList.remove('is-intermission');
+      spawnWave();
+    }
+  }
   ship.invulnerable = Math.max(0, ship.invulnerable - dt);
   const previousX = ship.x;
-  if (!game.over) ship.x = clampShipX(ship.x + movementDirection() * SHIP_SPEED * dt);
+  if (!game.over && !game.intermission) ship.x = clampShipX(ship.x + movementDirection() * SHIP_SPEED * dt);
   stir({
     fromX: previousX, fromY: ship.y + SHIP_LINE_HEIGHT * 2,
     x: ship.x, y: ship.y + SHIP_LINE_HEIGHT * 2,
@@ -439,6 +491,10 @@ function updateGame(dt) {
     }
   }
 
+  // Celebrate as soon as the last invader falls, before any remaining enemy
+  // shot can hit the player. Explosions and the text current keep settling.
+  if (!game.over && !game.intermission && enemies.length === 0) beginWaveIntermission();
+
   for (let i = enemyBullets.length - 1; i >= 0; i--) {
     const bullet = enemyBullets[i];
     const previousY = bullet.y;
@@ -469,14 +525,6 @@ function updateGame(dt) {
       particle.vy = particle.vy * Math.exp(-1.5 * dt) + 60 * dt;
     }
     if (explosion.age >= explosion.duration) explosions.splice(i, 1);
-  }
-
-  if (!game.over && enemies.length === 0) {
-    game.waveDelay += dt;
-    if (game.waveDelay >= 1.6) {
-      game.waveDelay = 0;
-      spawnWave();
-    }
   }
 }
 
@@ -763,7 +811,7 @@ const gameKeys = new Set(['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space']);
 window.addEventListener('keydown', (event) => {
   if (!game.started || game.over || !gameKeys.has(event.code) || event.ctrlKey || event.metaKey || event.altKey) return;
   event.preventDefault();
-  if (document.hidden) return;
+  if (document.hidden || game.intermission) return;
   if (event.code === 'Space' && !keys.has('Space') && !isFiring()) fireShot();
   keys.add(event.code);
   wake();
@@ -778,7 +826,7 @@ window.addEventListener('keyup', (event) => {
 canvas.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || !event.isPrimary) return;
   event.preventDefault();
-  if (!game.started || game.over) return;
+  if (!game.started || game.over || game.intermission) return;
   if (event.pointerType === 'touch') ship.x = shipXFromPointer(event);
   if (!isFiring()) fireShot();
   firingPointer = event.pointerId;
@@ -787,7 +835,7 @@ canvas.addEventListener('pointerdown', (event) => {
 });
 
 canvas.addEventListener('pointermove', (event) => {
-  if (event.pointerType === 'touch' && event.pointerId === firingPointer && !game.over) {
+  if (event.pointerType === 'touch' && event.pointerId === firingPointer && !game.over && !game.intermission) {
     ship.x = shipXFromPointer(event);
   }
 });
