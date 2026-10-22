@@ -19,7 +19,7 @@ before(async () => {
   ));
 });
 const gameCode = readFileSync(new URL('../main.js', import.meta.url), 'utf8')
-  .replace(/^import .* from '\.\/literature\.js';\n/, '');
+  .replace(/^import .* from '\.\/(literature|community)\.js';\n/gm, '');
 
 function createGame(screenWidth, screenHeight, reducedMotion = false) {
   const windowEvents = new Map();
@@ -71,6 +71,7 @@ function createGame(screenWidth, screenHeight, reducedMotion = false) {
     // Cycle through every real excerpt to catch atlas and wrapping errors.
     chooseReading: () => readings[nextReading++ % readings.length],
     chooseQuote,
+    setupCommunity: () => ({ startGame() {}, finishGame() {}, refresh() {} }),
     window: {
       innerWidth: screenWidth, innerHeight: screenHeight, devicePixelRatio: 2,
       addEventListener: (name, handler) => windowEvents.set(name, handler),

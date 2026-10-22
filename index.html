@@ -11,9 +11,21 @@
   <body>
     <main class="is-starting">
       <section class="start-screen" aria-labelledby="start-title">
+        <div class="start-content">
         <h1 id="start-title"><img class="title-art" src="/title.svg" alt="Txt Invaders" width="840" height="96" /></h1>
         <button class="start" type="button" autofocus>Start</button>
         <p class="start-instructions"><span class="keyboard-instructions"><span class="instruction-key">← →</span> / <span class="instruction-key">A D</span> to move · Hold <span class="instruction-key">SPACE</span> or click to fire.</span><span class="touch-instructions">Hold and drag to move and fire.</span></p>
+        <section class="leaderboard" aria-labelledby="leaderboard-title">
+          <h2 id="leaderboard-title">TOP 10</h2>
+          <table>
+            <thead><tr><th scope="col">#</th><th scope="col">NAME</th><th scope="col">SCORE</th><th scope="col">WAVE</th></tr></thead>
+            <tbody data-leaderboard-rows></tbody>
+          </table>
+          <p class="leaderboard-status" data-leaderboard-status role="status">Loading scores…</p>
+          <button class="text-button" data-leaderboard-retry type="button" hidden>Retry</button>
+        </section>
+        <p class="games-played"><strong data-games-played>—</strong> games played</p>
+        </div>
       </section>
       <p class="accessible-text">Move with the arrow keys or A and D. Hold Space or the left mouse button to shoot. On a touch screen, hold and drag to move and fire. Red skimmers shoot downward, blue hunters aim at you, and orange bombers fire a spread. Your ship has three hull points. Destroy enemies to score points and advance to the next wave. After game over, use the OK button to restart.</p>
       <p class="accessible-text page-text"></p>
@@ -37,8 +49,18 @@
         <p class="game-over-art" aria-hidden="true">· + * + ·</p>
         <h2 id="game-over-title">SHIP LOST</h2>
         <p data-final-score></p>
+        <form class="score-form" data-score-form hidden>
+          <label for="player-name">Your name <span class="control-label">(public)</span></label>
+          <div class="score-form-fields">
+            <input id="player-name" data-player-name name="nickname" type="text" autocomplete="nickname" maxlength="12" required aria-describedby="name-hint" />
+            <button class="save-score" data-save-score type="submit">Save score</button>
+          </div>
+          <p id="name-hint" class="control-label">1–12 letters or numbers. No account needed.</p>
+        </form>
+        <p class="score-status" data-score-status role="status"></p>
         <button class="restart" type="button">OK</button>
         <p class="control-label">Click OK to play again.</p>
+        <button class="text-button" data-show-leaderboard type="button">High scores</button>
       </section>
     </main>
     <script type="module" src="/main.js"></script>

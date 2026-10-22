@@ -5,11 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "test": "node tests/game.test.js",
+    "dev:api": "wrangler dev --local --ip 127.0.0.1",
+    "dev:full": "npm run build && npm run db:migrate:local && npm run dev:api",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node tests/game.test.js && node tests/worker.test.js",
+    "test:e2e": "playwright test",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
   "devDependencies": {
-    "vite": "7.1.8"
+    "@playwright/test": "^1.64.1",
+    "vite": "7.3.7",
+    "wrangler": "^4.151.3"
   }
 }

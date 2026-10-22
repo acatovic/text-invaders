@@ -1,4 +1,7 @@
 import { chooseReading, chooseQuote } from './literature.js';
+import { setupCommunity } from './community.js';
+
+const community = setupCommunity();
 
 let reading = chooseReading();
 let paragraphs = reading.paragraphs;
@@ -305,6 +308,7 @@ function restartGame() {
   layout();
   spawnWave();
   wake();
+  community.startGame();
 }
 
 function beginWaveIntermission() {
@@ -409,6 +413,7 @@ function hitShip() {
     finalScoreLabel.textContent = `${game.score.toLocaleString()} points · wave ${game.wave}`;
     gameOverPanel.hidden = false;
     gameOverPanel.focus({ preventScroll: true });
+    void community.finishGame(game.score, game.wave);
   }
 }
 
@@ -842,6 +847,15 @@ canvas.addEventListener('pointermove', (event) => {
 
 document.querySelector('.restart').addEventListener('click', restartGame);
 document.querySelector('.start').addEventListener('click', restartGame);
+document.querySelector('[data-show-leaderboard]').addEventListener('click', () => {
+  resetInput();
+  game.started = false;
+  gameOverPanel.hidden = true;
+  startScreen.hidden = false;
+  main.classList.add('is-starting');
+  document.querySelector('.start').focus({ preventScroll: true });
+  void community.refresh();
+});
 
 function releaseFire(event) {
   if (event.pointerId === firingPointer) firingPointer = null;
