@@ -7,6 +7,8 @@ The game opens on a pixel-letter **Txt Invaders** title screen. Click or tap **S
 
 The startup screen also shows a shared **top-10 leaderboard** and **games played** counter. Qualifying players can save a public nickname after game over, or skip it and play again. **High scores** returns to the startup screen. Ties favor the higher wave, then the earlier submitted score.
 
+The leaderboard and control hints use bold pixel lettering, with pink key highlights and a framed score table. The Silkscreen font is bundled locally under the [SIL Open Font License](public/fonts/silkscreen-OFL.txt).
+
 An ASCII spaceship sits at the bottom of a page of text. Move with **← / →** or **A / D**, and hold **Space** or the **left mouse button** to fire ASCII shots upward. The ship stays within the screen and only moves horizontally.
 
 On a touch screen, hold and drag to move and fire.

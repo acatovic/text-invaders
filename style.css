@@ -1,8 +1,17 @@
+@font-face {
+  font-family: "Silkscreen";
+  src: url("/fonts/silkscreen-bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   color: #252525;
   background: #f7f7f5;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --arcade-font: "Silkscreen", "SFMono-Regular", Consolas, monospace;
 }
 
 * {
@@ -59,14 +68,13 @@ canvas {
 }
 
 .start {
-  min-width: 160px;
+  min-width: 180px;
   padding: 14px 28px;
   border: 2px solid #252525;
   background: #ed2388;
   color: white;
   box-shadow: 4px 4px 0 #252525;
-  font: inherit;
-  font-size: 18px;
+  font: 700 24px / 1.2 var(--arcade-font);
   cursor: pointer;
 }
 
@@ -85,46 +93,91 @@ canvas {
 }
 
 .start-instructions {
-  margin: 20px 0 0;
-  color: #555;
-  font-size: 16px;
-  line-height: 1.8;
+  margin: 24px 0 0;
+  color: #252525;
+  font: 700 20px / 1.8 var(--arcade-font);
+}
+
+.instruction-group {
+  display: inline-block;
+}
+
+.instruction-divider {
+  margin: 0 8px;
+  color: #b51965;
 }
 
 .instruction-key {
-  color: #ed2388;
-  font-weight: 700;
+  display: inline-block;
+  padding: 0 6px;
+  border-bottom: 2px solid #ed2388;
+  background: #ed238810;
+  color: #b51965;
 }
 
 .leaderboard {
-  width: min(520px, 100%);
-  margin: 24px auto 0;
+  width: min(640px, 100%);
+  margin: 28px auto 0;
+  padding: 16px 18px;
+  border: 2px solid #252525;
+  background: #f7f7f5f5;
+  box-shadow: 6px 6px 0 #ed2388;
 }
 
 .leaderboard h2 {
-  margin: 0 0 12px;
-  font-size: 13px;
-  letter-spacing: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 0 0 14px;
+  font: 700 32px / 1.25 var(--arcade-font);
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 #ed238830;
+}
+
+.leaderboard h2::before,
+.leaderboard h2::after {
+  content: "";
+  width: 33px;
+  height: 24px;
+  background: #ed2388;
+  mask: url("/leaderboard-invader.svg") center / contain no-repeat;
 }
 
 .leaderboard table {
   width: 100%;
   border-collapse: collapse;
-  background: #f7f7f5ed;
-  font-size: 12px;
-  line-height: 1.5;
+  font: 700 18px / 1.4 var(--arcade-font);
   text-align: left;
 }
 
 .leaderboard th {
-  color: #777;
-  font-size: 10px;
-  font-weight: 400;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #252525;
+  color: #555;
+  font-size: 14px;
 }
 
 .leaderboard th,
 .leaderboard td {
-  padding: 3px 8px;
+  padding: 6px 8px;
+}
+
+.leaderboard td {
+  border-bottom: 1px solid #25252518;
+}
+
+.leaderboard tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.leaderboard td:first-child {
+  color: #777;
+  font-size: 14px;
+}
+
+.leaderboard td:nth-child(2) {
+  overflow-wrap: anywhere;
 }
 
 .leaderboard th:nth-child(n + 3),
@@ -134,21 +187,21 @@ canvas {
 }
 
 .leaderboard tbody tr:first-child td {
-  color: #ed2388;
-  font-weight: 700;
+  background: #ed238810;
+  color: #b51965;
 }
 
 .leaderboard .leaderboard-empty {
-  padding: 12px 8px;
-  color: #777;
-  font-weight: 400;
+  padding: 20px 8px;
+  color: #555;
+  font-size: 16px;
   text-align: center;
 }
 
 .leaderboard-status {
   margin: 8px 0 0;
-  color: #777;
-  font-size: 11px;
+  color: #555;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -169,13 +222,13 @@ canvas {
 }
 
 .games-played {
-  margin: 16px 0 0;
-  color: #777;
-  font-size: 11px;
+  margin: 22px 0 0;
+  color: #555;
+  font: 700 14px / 1.5 var(--arcade-font);
 }
 
 .games-played strong {
-  color: #ed2388;
+  color: #b51965;
 }
 
 .touch-instructions,
@@ -197,7 +250,7 @@ canvas {
 
 .reading-credit {
   position: fixed;
-  bottom: 44px;
+  bottom: 52px;
   left: 50%;
   max-width: calc(100% - 32px);
   padding: 3px 8px;
@@ -349,8 +402,7 @@ canvas {
   padding: 6px 10px;
   transform: translateX(-50%);
   background: #f7f7f5ed;
-  font-size: 10px;
-  line-height: 14px;
+  font: 700 14px / 1.5 var(--arcade-font);
   pointer-events: none;
 }
 
@@ -514,7 +566,54 @@ canvas {
 
   .controls::after {
     content: "HOLD + DRAG to move & fire";
-    font-size: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .start-screen {
+    padding: 24px 16px;
+  }
+
+  .start-instructions {
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+  .instruction-group {
+    display: block;
+  }
+
+  .instruction-divider {
+    display: none;
+  }
+
+  .leaderboard {
+    padding: 14px 8px;
+    box-shadow: 4px 4px 0 #ed2388;
+  }
+
+  .leaderboard h2 {
+    font-size: 28px;
+  }
+
+  .leaderboard table {
+    font-size: 14px;
+  }
+
+  .leaderboard th,
+  .leaderboard td:first-child {
+    font-size: 12px;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 7px 4px;
+  }
+
+  .controls {
+    gap: 16px;
+    font-size: 12px;
   }
 }
 
@@ -526,7 +625,22 @@ canvas {
 
   .controls {
     gap: 12px;
-    font-size: 9px;
+    font-size: 10px;
+  }
+
+  .controls::after {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .leaderboard table {
+    font-size: 12px;
+  }
+
+  .leaderboard th,
+  .leaderboard td:first-child {
+    font-size: 10px;
   }
 }
 

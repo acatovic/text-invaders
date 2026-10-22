@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#f7f7f5" />
     <meta name="description" content="Battle colorful ASCII invaders on a living page of text. Dodge enemy fire and blast ships into rippling explosions of letters." />
     <title>Txt Invaders</title>
+    <link rel="preload" href="/fonts/silkscreen-bold.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
@@ -14,7 +15,7 @@
         <div class="start-content">
         <h1 id="start-title"><img class="title-art" src="/title.svg" alt="Txt Invaders" width="840" height="96" /></h1>
         <button class="start" type="button" autofocus>Start</button>
-        <p class="start-instructions"><span class="keyboard-instructions"><span class="instruction-key">← →</span> / <span class="instruction-key">A D</span> to move · Hold <span class="instruction-key">SPACE</span> or click to fire.</span><span class="touch-instructions">Hold and drag to move and fire.</span></p>
+        <p class="start-instructions"><span class="keyboard-instructions"><span class="instruction-group"><span class="instruction-key">← →</span> / <span class="instruction-key">A D</span> to move</span><span class="instruction-divider" aria-hidden="true"> · </span><span class="instruction-group">Hold <span class="instruction-key">SPACE</span> or <span class="instruction-key">CLICK</span> to fire</span></span><span class="touch-instructions"><span class="instruction-key">HOLD + DRAG</span> to move and fire</span></p>
         <section class="leaderboard" aria-labelledby="leaderboard-title">
           <h2 id="leaderboard-title">TOP 10</h2>
           <table>
